@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exam Prep Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>📚 Government Exam Preparation Hub</h1>
+        <p>Pick an exam to see syllabus, previous papers, notes, books, and more</p>
+    </header>
+
+    <div class="container">
+        <a class="exam-card" href="{{ url_for('study_plan_select') }}" style="background: linear-gradient(90deg, #1e3a8a, #2563eb); color: white; margin-bottom: 14px;">
+            <h3 style="color: white;">🧠 AI Study Plan Generator</h3>
+            <p style="color: #dbeafe;">Rate your confidence per subject and get a smart, personalized time allocation</p>
+        </a>
+
+        <a class="exam-card" href="{{ url_for('countdown_select') }}" style="background: linear-gradient(90deg, #92400e, #d97706); color: white; margin-bottom: 14px;">
+            <h3 style="color: white;">⏰ Exam Countdown Timer</h3>
+            <p style="color: #fef3c7;">See a live countdown to your exam day</p>
+        </a>
+
+        <a class="exam-card" href="{{ url_for('quiz_select') }}" style="background: linear-gradient(90deg, #166534, #16a34a); color: white; margin-bottom: 14px;">
+            <h3 style="color: white;">📝 Practice Quiz</h3>
+            <p style="color: #dcfce7;">Test yourself and get instant feedback</p>
+        </a>
+
+        <a class="exam-card" href="{{ url_for('chatbot_page') }}" style="background: linear-gradient(90deg, #5b21b6, #7c3aed); color: white; margin-bottom: 20px;">
+            <h3 style="color: white;">💬 AI Chatbot</h3>
+            <p style="color: #ede9fe;">Ask questions about eligibility, exam pattern and study tips</p>
+        </a>
+
+        <div class="exam-grid">
+            {% for exam_id, exam in exams.items() %}
+            <a class="exam-card" href="{{ url_for('exam_detail', exam_id=exam_id) }}">
+                <h3>{{ exam.category }}</h3>
+                <p>{{ exam.name }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer>SmartMed-style Exam Prep Hub &middot; Built with Flask</footer>
+</body>
+</html>

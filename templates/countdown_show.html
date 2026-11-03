@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Countdown - {{ exam.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>⏰ Exam Countdown</h1>
+        <p>{{ exam.name }}</p>
+    </header>
+
+    <div class="container">
+        <a class="back-link" href="{{ url_for('countdown_select') }}">&larr; Set a different date</a>
+
+        <div class="detail-card countdown-card">
+            <div class="countdown-grid">
+                <div class="countdown-box">
+                    <div class="countdown-number" id="days">--</div>
+                    <div class="countdown-label">Days</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-number" id="hours">--</div>
+                    <div class="countdown-label">Hours</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-number" id="minutes">--</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-number" id="seconds">--</div>
+                    <div class="countdown-label">Seconds</div>
+                </div>
+            </div>
+            <p id="countdown-message" class="countdown-message"></p>
+        </div>
+    </div>
+
+    <footer>SmartMed-style Exam Prep Hub &middot; Built with Flask</footer>
+
+    <script>
+        const targetDate = new Date("{{ target_date_str }}T00:00:00").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            const daysEl = document.getElementById("days");
+            const hoursEl = document.getElementById("hours");
+            const minutesEl = document.getElementById("minutes");
+            const secondsEl = document.getElementById("seconds");
+            const messageEl = document.getElementById("countdown-message");
+
+            if (diff <= 0) {
+                daysEl.innerText = "0";
+                hoursEl.innerText = "0";
+                minutesEl.innerText = "0";
+                secondsEl.innerText = "0";
+                messageEl.innerText = "🎉 Your exam day is here (or has passed). Good luck!";
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            daysEl.innerText = days;
+            hoursEl.innerText = hours;
+            minutesEl.innerText = minutes;
+            secondsEl.innerText = seconds;
+            messageEl.innerText = "Keep going — every day counts!";
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>

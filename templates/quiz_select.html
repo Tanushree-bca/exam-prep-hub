@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Practice Quiz - Select Exam</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>📝 Practice Quiz</h1>
+    <p>Select your examination and test your knowledge.</p>
+</header>
+
+<div class="container">
+    <div class="detail-card">
+        <h2>Choose Your Examination</h2>
+
+        <div class="exam-grid">
+            {% for exam_id, exam in exams.items() %}
+            <a class="exam-card" href="{{ url_for('quiz', exam_id=exam_id) }}">
+                <h3>{{ exam.name }}</h3>
+                <p>{{ exam.category }}</p>
+                <span>Start Practice Quiz →</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<footer>Government Exam Preparation Hub</footer>
+
+</body>
+</html>

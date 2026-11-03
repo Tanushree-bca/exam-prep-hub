@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Chatbot - Exam Prep Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>💬 Exam Prep Assistant</h1>
+        <p>Ask about eligibility, exam pattern, study tips, or how to use this site</p>
+    </header>
+
+    <div class="container">
+        <a class="back-link" href="{{ url_for('home') }}">&larr; Back to all exams</a>
+
+        <div class="detail-card chat-card">
+            <div id="chat-window" class="chat-window" aria-live="polite"></div>
+
+            <div id="chip-area" class="chip-area"></div>
+
+            <form id="chat-form" class="chat-form" autocomplete="off">
+                <input type="text" id="chat-input" maxlength="300"
+                       placeholder="Type your question, e.g. UPSC eligibility" required>
+                <button type="submit" class="btn-primary" id="send-btn">Send</button>
+            </form>
+            <p class="chat-footnote">This is a small retrieval-based NLP bot (TF-IDF + cosine similarity). It only knows what is in its knowledge base, so always confirm details on the official website.</p>
+        </div>
+    </div>
+
+    <footer>SmartMed-style Exam Prep Hub &middot; Built with Flask</footer>
+
+    <script>
+        const startSuggestions = {{ suggestions | tojson }};
+        const askUrl = "{{ url_for('chatbot_ask') }}";
+        const chatWindow = document.getElementById("chat-window");
+        const chipArea = document.getElementById("chip-area");
+        const form = document.getElementById("chat-form");
+        const input = document.getElementById("chat-input");
+        const sendBtn = document.getElementById("send-btn");
+
+        function addMessage(text, who, meta) {
+            const row = document.createElement("div");
+            row.className = "chat-msg " + who;
+            const bubble = document.createElement("div");
+            bubble.className = "chat-bubble";
+            bubble.textContent = text;          // textContent keeps user input safe
+            row.appendChild(bubble);
+            if (meta) {
+                const m = document.createElement("div");
+                m.className = "chat-meta";
+                m.textContent = meta;
+                row.appendChild(m);
+            }
+            chatWindow.appendChild(row);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function showChips(list) {
+            chipArea.innerHTML = "";
+            list.forEach(function (q) {
+                const b = document.createElement("button");
+                b.type = "button";
+                b.className = "chip";
+                b.textContent = q;
+                b.addEventListener("click", function () { send(q); });
+                chipArea.appendChild(b);
+            });
+        }
+
+        async function send(text) {
+            text = text.trim();
+            if (!text) { return; }
+            addMessage(text, "user");
+            chipArea.innerHTML = "";
+            input.value = "";
+            sendBtn.disabled = true;
+            try {
+                const res = await fetch(askUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    addMessage(data.error || "Something went wrong. Please try again.", "bot");
+                } else {
+                    addMessage(data.answer, "bot", data.meta);
+                    if (data.suggestions && data.suggestions.length) { showChips(data.suggestions); }
+                }
+            } catch (err) {
+                addMessage("Sorry, I couldn't reach the server. Please try again.", "bot");
+            }
+            sendBtn.disabled = false;
+            input.focus();
+        }
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            send(input.value);
+        });
+
+        addMessage("Hello! 👋 I'm the Exam Prep Assistant. Ask me about UPSC, SSC, Banking, Railway, State PSC or Defence exams, or tap a suggestion below.", "bot");
+        showChips(startSuggestions);
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Study Plan - {{ exam.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>🧠 AI Study Plan Generator</h1>
+        <p>{{ exam.name }}</p>
+    </header>
+
+    <div class="container">
+        <a class="back-link" href="{{ url_for('study_plan_select') }}">&larr; Choose a different exam</a>
+
+        <div class="detail-card">
+            <h2>Step 2: Rate Your Confidence</h2>
+            <p style="color:#6b7280; margin-bottom:18px;">For each subject, rate how confident you feel (1 = weak, 5 = strong). The AI will give more daily time to your weaker subjects.</p>
+
+            <form method="POST" action="{{ url_for('study_plan', exam_id=exam_id) }}">
+                {% for subject in exam.subjects %}
+                <div class="form-group">
+                    <label for="confidence_{{ subject }}">{{ subject }}</label>
+                    <input type="range" name="confidence_{{ subject }}" id="confidence_{{ subject }}"
+                           min="1" max="5" value="3" class="confidence-slider"
+                           oninput="document.getElementById('val_{{ loop.index }}').innerText = this.value">
+                    <span id="val_{{ loop.index }}" class="slider-value">3</span> / 5
+                </div>
+                {% endfor %}
+
+                <div class="form-group">
+                    <label for="exam_date">Your Exam Date</label>
+                    <input type="date" name="exam_date" id="exam_date" value="{{ exam_date_str or '' }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="daily_hours">Daily Study Hours Available</label>
+                    <input type="number" name="daily_hours" id="daily_hours" min="1" max="16" step="0.5"
+                           value="{{ daily_hours or '' }}" placeholder="e.g. 4" required>
+                </div>
+
+                <button type="submit" class="btn-primary">✨ Generate My Smart Plan</button>
+                {% if allocation %}
+                <button type="submit" class="btn-secondary" formaction="{{ url_for('study_plan_pdf', exam_id=exam_id) }}">📄 Download as PDF</button>
+                {% endif %}
+            </form>
+
+            {% if error %}
+            <p class="error-msg">⚠️ {{ error }}</p>
+            {% endif %}
+        </div>
+
+        {% if allocation %}
+        <div class="detail-card" style="margin-top: 20px;">
+            <h2>Your Personalized Allocation</h2>
+            <p style="color:#6b7280; margin-bottom: 16px;">{{ days_left }} days until your exam</p>
+
+            <p class="info-note">💡 {{ insight }}</p>
+
+            <table class="plan-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Your Confidence</th>
+                        <th>Daily Hours Allocated</th>
+                        <th>Total Hours Until Exam</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in allocation %}
+                    <tr>
+                        <td>{{ item.subject }}</td>
+                        <td>{{ item.confidence }} / 5</td>
+                        <td><strong>{{ item.daily_hours }} hrs</strong></td>
+                        <td>{{ item.total_hours }} hrs</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>SmartMed-style Exam Prep Hub &middot; Built with Flask</footer>
+</body>
+</html>

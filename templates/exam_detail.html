@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ exam.name }} - Exam Prep Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>📚 Exam Prep Hub</h1>
+        <p>Everything you need for this exam, in one place</p>
+    </header>
+
+    <div class="container">
+        <a class="back-link" href="{{ url_for('home') }}">&larr; Back to all exams</a>
+
+        <div class="detail-card">
+            <span class="category-tag">{{ exam.category }}</span>
+            <h2>{{ exam.name }}</h2>
+
+            {% if exam.varies_note %}
+            <p class="info-note">ℹ️ This exam varies by state. The links below search for general State PSC resources — check your specific state's PSC website for exact details.</p>
+            {% endif %}
+
+            {% if exam.site_note %}
+            <p class="info-note">⚠️ Some official government websites may show a browser security warning due to outdated certificates on their end. This is common and expected — you can safely proceed by clicking "Advanced" then "Proceed."</p>
+            {% endif %}
+
+            <div class="info-row">
+                <div class="info-label">📅 Exam Date</div>
+                <div class="info-value">{{ exam.date }}</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">📖 Syllabus & Notification</div>
+                <div class="info-value"><a href="{{ exam.syllabus_link }}" target="_blank">View Syllabus</a></div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">📝 Previous Year Papers</div>
+                <div class="info-value"><a href="{{ exam.papers_link }}" target="_blank">View Papers</a></div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">📚 Study Notes</div>
+                <div class="info-value"><a href="{{ exam.notes_link }}" target="_blank">View Notes</a></div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">📕 Recommended Books</div>
+                <div class="info-value">
+                    <ul class="books-list">
+                        {% for book in exam.books %}
+                        <li>{{ book }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">🔗 Official Website</div>
+                <div class="info-value"><a href="{{ exam.official_link }}" target="_blank">Visit Official Site</a></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>SmartMed-style Exam Prep Hub &middot; Built with Flask</footer>
+</body>
+</html>

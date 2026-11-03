@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Your Exam - AI Study Plan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>🧠 AI Study Plan Generator</h1>
+    <p>Select your examination to create a personalised study plan.</p>
+</header>
+
+<div class="container">
+    <div class="detail-card">
+        <h2>Step 1: Choose Your Examination</h2>
+
+        <div class="exam-grid">
+            {% for exam_id, exam in exams.items() %}
+            <a class="exam-card" href="{{ url_for('study_plan', exam_id=exam_id) }}">
+                <h3>{{ exam.name }}</h3>
+                <p>{{ exam.category }}</p>
+                <span>Generate Study Plan →</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<footer>AI Study Plan Generator &middot; Built with Flask</footer>
+
+</body>
+</html>

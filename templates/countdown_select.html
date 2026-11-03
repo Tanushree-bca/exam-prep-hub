@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exam Countdown - Exam Prep Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>⏰ Exam Countdown Timer</h1>
+        <p>See exactly how much time is left until your exam</p>
+    </header>
+
+    <div class="container">
+        <a class="back-link" href="{{ url_for('home') }}">&larr; Back to all exams</a>
+
+        <div class="detail-card">
+            <h2>Set Your Countdown</h2>
+            <form method="GET" action="{{ url_for('countdown_show') }}">
+                <div class="form-group">
+                    <label for="exam_id">Select Exam</label>
+                    <select name="exam_id" id="exam_id" required>
+                        <option value="">-- Choose an exam --</option>
+                        {% for exam_id, exam in exams.items() %}
+                        <option value="{{ exam_id }}">{{ exam.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="target_date">Your Exam Date</label>
+                    <input type="date" name="target_date" id="target_date" required>
+                </div>
+
+                <button type="submit" class="btn-primary">⏰ Start Countdown</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>SmartMed-style Exam Prep Hub &middot; Built with Flask</footer>
+</body>
+</html>

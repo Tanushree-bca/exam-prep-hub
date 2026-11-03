@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ exam.name }} - Practice Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>📝 Practice Quiz</h1>
+    <p>{{ exam.name }}</p>
+</header>
+
+<div class="container">
+    <div class="detail-card">
+
+        {% if results is none %}
+        <h2>Test Your Knowledge</h2>
+
+        <form method="POST" action="{{ url_for('quiz', exam_id=exam_id) }}">
+
+            {% for q in questions %}
+            <div class="form-group">
+                <h3>Question {{ loop.index }}: {{ q.q }}</h3>
+
+                {% for option in q.options %}
+                <label>
+                    <input type="radio"
+                           name="q{{ loop.parent.index0 if false else loop.index0 }}"
+                           value="{{ loop.index0 }}"
+                           required>
+                    {{ option }}
+                </label>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-primary">
+                Submit Quiz
+            </button>
+
+        </form>
+
+        {% else %}
+
+        <h2>Your Quiz Results</h2>
+        <h3>Your Score: {{ score }} / {{ total }}</h3>
+
+        {% for result in results %}
+        <div class="form-group">
+            <h3>Question {{ loop.index }}: {{ result.question }}</h3>
+
+            <p>Your answer:
+                {% if result.selected_index is not none %}
+                    {{ result.options[result.selected_index] }}
+                {% else %}
+                    Not answered
+                {% endif %}
+            </p>
+
+            <p>Correct answer:
+                {{ result.options[result.correct_index] }}
+            </p>
+
+            {% if result.is_correct %}
+                <p style="color:green;">Correct!</p>
+            {% else %}
+                <p style="color:red;">Incorrect!</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <a href="{{ url_for('quiz_select') }}" class="btn-primary">
+            Try Another Quiz
+        </a>
+
+        {% endif %}
+
+    </div>
+</div>
+
+<footer>Government Exam Preparation Hub</footer>
+
+</body>
+</html>
